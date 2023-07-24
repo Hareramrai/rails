@@ -31,6 +31,8 @@ module ActionController
     include BasicImplicitRender
 
     def default_render
+      Rails.logger.info("AP::Metal::ImplicitRender:: Which will add default render")
+      Rails.logger.info("Also going to call find_all")
       if template_exists?(action_name.to_s, _prefixes, variants: request.variant)
         render
       elsif any_templates?(action_name.to_s, _prefixes)

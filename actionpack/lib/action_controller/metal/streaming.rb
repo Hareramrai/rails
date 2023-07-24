@@ -212,6 +212,10 @@ module ActionController #:nodoc:
 
       # Call render_body if we are streaming instead of usual +render+.
       def _render_template(options)
+        Rails.logger.info("AP:: Streaming: _render_temaplate #{options.inspect}")
+        Rails.logger.info("view_renderer #{view_renderer.inspect}")
+        Rails.logger.info(view_context.inspect)
+        Rails.logger.info("            "*300)
         if options.delete(:stream)
           Rack::Chunked::Body.new view_renderer.render_body(view_context, options)
         else

@@ -21,7 +21,9 @@ module AbstractController
     # Normalizes arguments, options and then delegates render_to_body and
     # sticks the result in <tt>self.response_body</tt>.
     def render(*args, &block)
+      Rails.logger.info("AP:: abstract controller rendering: render args : #{args.inspect}")
       options = _normalize_render(*args, &block)
+      Rails.logger.info("options: #{options.inspect}")
       rendered_body = render_to_body(options)
       if options[:html]
         _set_html_content_type
@@ -49,6 +51,9 @@ module AbstractController
 
     # Performs the actual template rendering.
     def render_to_body(options = {})
+      Rails.logger.info("AP:: abstract controller rendering: render_to_body")
+      Rails.logger.info(options.inspect)
+      Rails.logger.info("this above call is clean")
     end
 
     # Returns Content-Type of rendered content.

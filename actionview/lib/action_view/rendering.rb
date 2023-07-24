@@ -99,6 +99,10 @@ module ActionView
     end
 
     def render_to_body(options = {})
+      Rails.logger.info("AV: Rendering : render_to_body -> #{options.inspect}")
+      Rails.logger.info(view_context.inspect)
+      Rails.logger.info("lookup_context #{lookup_context.inspect}")
+      Rails.logger.info("basically going to render template")
       _process_options(options)
       _render_template(options)
     end
@@ -110,10 +114,15 @@ module ActionView
         assigns = options.delete(:assigns)
         context = view_context
 
+        Rails.logger.info("AV: Rendering :: _render_template")
+
+        Rails.logger.info(options.inspect)
+
         context.assign assigns if assigns
         lookup_context.variants = variant if variant
 
         rendered_template = context.in_rendering_context(options) do |renderer|
+          Rails.logger.info("renderer #{renderer.inspect}, options: #{options.inspect}")
           renderer.render_to_object(context, options)
         end
 

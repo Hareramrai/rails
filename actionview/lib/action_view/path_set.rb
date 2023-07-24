@@ -45,14 +45,27 @@ module ActionView #:nodoc:
     end
 
     def find(*args)
-      find_all(*args).first || raise(MissingTemplate.new(self, *args))
+      Rails.logger.info("*********"*300)
+      Rails.logger.info("AV:: Pathset :: find ")
+      Rails.logger.info("inside path set to find template")
+      Rails.logger.info(args.inspect)
+      t = find_all(*args).first 
+      Rails.logger.info("=========="*300)
+      Rails.logger.info("          "*300)
+
+      t || raise(MissingTemplate.new(self, *args))
     end
 
     def find_all(path, prefixes = [], *args)
+      Rails.logger.info("AV:: path set: find:: find_all")
+      Rails.logger.info(path.inspect)
+      Rails.logger.info(args)
       _find_all path, prefixes, args
     end
 
     def exists?(path, prefixes, *args)
+      Rails.logger.info("AV:: PathSet:: exists? : maybe implict render")
+      Rails.logger.info("path #{path}, prefixes #{prefixes}, #{args}")
       find_all(path, prefixes, *args).any?
     end
 
@@ -67,10 +80,19 @@ module ActionView #:nodoc:
 
     private
       def _find_all(path, prefixes, args)
+        Rails.logger.info("--------------------------------"*200)
         prefixes = [prefixes] if String === prefixes
         prefixes.each do |prefix|
           paths.each do |resolver|
+            Rails.logger.info("AV:: inside :_find_all:each: paths ")
+            
+            Rails.logger.info(resolver.inspect)
+            Rails.logger.info(resolver.class)
+
             templates = resolver.find_all(path, prefix, *args)
+            Rails.logger.info("done:_find_all: #{templates}")
+
+            Rails.logger.info("        "*500)
             return templates unless templates.empty?
           end
         end

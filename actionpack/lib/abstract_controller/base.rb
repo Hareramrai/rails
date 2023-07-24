@@ -225,6 +225,7 @@ module AbstractController
       # Notice that the first argument is the method to be dispatched
       # which is *not* necessarily the same as the action name.
       def process_action(method_name, *args)
+        Rails.logger.info("AP:: Abstract Controller Base::  process_action: #{method_name}, #{args}")
         send_action(method_name, *args)
       end
 

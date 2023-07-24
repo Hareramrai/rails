@@ -26,13 +26,16 @@ module ActionController
 
     # Before processing, set the request formats in current controller formats.
     def process_action(*) #:nodoc:
+      Rails.logger.info("AP:: Rendering:: process_action::")
       self.formats = request.formats.map(&:ref).compact
+      Rails.logger.info("formats #{self.formats}" )
       super
     end
 
     # Check for double render errors and set the content_type after rendering.
     def render(*args) #:nodoc:
       raise ::AbstractController::DoubleRenderError if response_body
+      Rails.logger.info("AP:: From metal rendering : render #{args.inspect}")
       super
     end
 
@@ -49,6 +52,8 @@ module ActionController
     end
 
     def render_to_body(options = {})
+      Rails.logger.info("AP:: in action controller metal rendering: render_to_body")
+      Rails.logger.info("options: #{options.inspect}")
       super || _render_in_priorities(options) || " "
     end
 

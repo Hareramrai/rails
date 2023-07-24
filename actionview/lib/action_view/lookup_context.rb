@@ -124,15 +124,24 @@ module ActionView
       attr_reader :view_paths, :html_fallback_for_js
 
       def find(name, prefixes = [], partial = false, keys = [], options = {})
+        Rails.logger.info("AV:: LookupContext ViewPaths:: find")
+        Rails.logger.info(name)
+        Rails.logger.info(@view_paths.inspect)
+        Rails.logger.info("Now going to path set to find")
         @view_paths.find(*args_for_lookup(name, prefixes, partial, keys, options))
       end
       alias :find_template :find
 
       def find_all(name, prefixes = [], partial = false, keys = [], options = {})
+        Rails.logger.info("AV:: LookupContext ViewPaths:: find_all")
+        Rails.logger.info(name)
         @view_paths.find_all(*args_for_lookup(name, prefixes, partial, keys, options))
       end
 
       def exists?(name, prefixes = [], partial = false, keys = [], **options)
+        Rails.logger.info("AV:: Lookupcontext:: exists?")
+        Rails.logger.info("name: #{name}, prefixes: #{prefixes}, keys #{keys}, options #{options.inspect}")
+        Rails.logger.info("@view_paths :  #{@view_paths.class}")
         @view_paths.exists?(*args_for_lookup(name, prefixes, partial, keys, options))
       end
       alias :template_exists? :exists?

@@ -14,6 +14,8 @@ module ActionView
     private
       # Determine the template to be rendered using the given options.
       def determine_template(options)
+        Rails.logger.info("AV:: TemplateRenderer :: going to determine_template")
+        Rails.logger.info(options.inspect)
         keys = options.has_key?(:locals) ? options[:locals].keys : []
 
         if options.key?(:body)
@@ -39,9 +41,15 @@ module ActionView
         elsif options.key?(:renderable)
           Template::Renderable.new(options[:renderable])
         elsif options.key?(:template)
+          Rails.logger.info("AV:: determine_template when option is template")
           if options[:template].respond_to?(:render)
+            Rails.logger.info("can respond to render will return from here")
             options[:template]
           else
+            Rails.logger.info("going to find the template")
+            Rails.logger.info("keys #{keys}, @details #{@details}")
+            puts @lookup_context.class
+            Rails.logger.info("going to find_template")
             @lookup_context.find_template(options[:template], options[:prefixes], false, keys, @details)
           end
         else

@@ -143,10 +143,13 @@ module ActionController
     end
 
     def _render_to_body_with_renderer(options)
+      Rails.logger.info("AP:: in action controller metal:: renderers: _render_to_body_with_renderer")
+      Rails.logger.info("options: #{options.inspect}")
       _renderers.each do |name|
         if options.key?(name)
           _process_options(options)
           method_name = Renderers._render_with_renderer_method_name(name)
+          Rails.logger.info("method_name from, renderer: #{name}")
           return send(method_name, options.delete(name), options)
         end
       end

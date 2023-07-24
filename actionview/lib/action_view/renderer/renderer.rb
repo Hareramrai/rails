@@ -26,6 +26,9 @@ module ActionView
       if options.key?(:partial)
         render_partial_to_object(context, options)
       else
+        Rails.logger.info("AV: Rendering is going to start from render -> render_to_object")
+        Rails.logger.info("context: #{context.inspect}")
+        Rails.logger.info(options.inspect)
         render_template_to_object(context, options)
       end
     end
@@ -58,6 +61,10 @@ module ActionView
     end
 
     def render_template_to_object(context, options) #:nodoc:
+      Rails.logger.info("AV:: render_template_to_object: #{options.inspect}")
+      Rails.logger.info("AV:: @lookup_context #{@lookup_context}")
+      Rails.logger.info("AV:: context #{@context}")
+      Rails.logger.info("                   "*300)
       TemplateRenderer.new(@lookup_context).render(context, options)
     end
 
