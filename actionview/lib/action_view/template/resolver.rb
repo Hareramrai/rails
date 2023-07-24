@@ -151,17 +151,24 @@ module ActionView
     def find_all(name, prefix = nil, partial = false, details = {}, key = nil, locals = [])
       locals = locals.map(&:to_s).sort!.freeze
 
+      Rails.logger.info("AV:: Template Resolver :: find_all ")
+      Rails.logger.info("name: #{name}, prefix: #{prefix}, details #{details}, key #{key} locals #{locals}")
+      Rails.logger.info([name, prefix, partial])
       cached(key, [name, prefix, partial], details, locals) do
+        Rails.logger.info("find_all cached missed going to find using _find_all")
         _find_all(name, prefix, partial, details, key, locals)
       end
     end
 
     def find_all_with_query(query) # :nodoc:
+      Rails.logger.info("AV:: Template Resolver :: find_all_with_query >> #{query.inspect}")
       @cache.cache_query(query) { find_template_paths(File.join(@path, query)) }
     end
 
   private
     def _find_all(name, prefix, partial, details, key, locals)
+      Rails.logger.info("AV:: Resolver:: _find_All ")
+      Rails.logger.info(name, prefix, partial, details, key, locals)
       find_templates(name, prefix, partial, details, locals)
     end
 
@@ -211,17 +218,22 @@ module ActionView
 
     private
       def _find_all(name, prefix, partial, details, key, locals)
+        Rails.logger.info("AV:: Resolver :: _find_all ")
         path = Path.build(name, prefix, partial)
         query(path, details, details[:formats], locals, cache: !!key)
       end
 
       def query(path, details, formats, locals, cache:)
+        Rails.logger.info("AV:: Resolver :: query ")
+        Rails.logger.info("#{path}, #{details}, #{formats}, #{locals}, #{cache}")
+
         template_paths = find_template_paths_from_details(path, details)
         template_paths = reject_files_external_to_app(template_paths)
 
         template_paths.map do |template|
           unbound_template =
             if cache
+              Rails.logger.info("using cache, #{template}, #{path.virtual}")
               @unbound_templates.compute_if_absent([template, path.virtual]) do
                 build_unbound_template(template, path.virtual)
               end
@@ -350,7 +362,7 @@ module ActionView
         # Instead of checking for every possible path, as our other globs would
         # do, scan the directory for files with the right prefix.
         query = "#{escape_entry(File.join(@path, path))}*"
-
+        Rails.logger.info("AV:: find_candidate_template_paths :: query #{query}")
         Dir[query].reject do |filename|
           File.directory?(filename)
         end
@@ -365,6 +377,8 @@ module ActionView
         candidates = find_candidate_template_paths(path)
 
         regex = build_regex(path, details)
+
+        Rails.logger.info("AV:: find_template_paths_from_details :: candidates #{candidates}")
 
         candidates.uniq.reject do |filename|
           # This regex match does double duty of finding only files which match
