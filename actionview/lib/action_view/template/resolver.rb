@@ -248,6 +248,7 @@ module ActionView
 
         Rails.logger.info("AV:: query :: result #{t.inspect}")
         Rails.logger.info("       "*300)
+        t
       end
 
       def source_for_template(template)

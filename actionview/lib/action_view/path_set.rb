@@ -66,7 +66,10 @@ module ActionView #:nodoc:
     def exists?(path, prefixes, *args)
       Rails.logger.info("AV:: PathSet:: exists? : maybe implict render")
       Rails.logger.info("path #{path}, prefixes #{prefixes}, #{args}")
-      find_all(path, prefixes, *args).any?
+      Rails.logger.info("AV: paths #{paths}")
+      t= find_all(path, prefixes, *args)
+      Rails.logger.info("AV: path set exists results: #{t.inspect}")
+      t.any?
     end
 
     def find_all_with_query(query) # :nodoc:
