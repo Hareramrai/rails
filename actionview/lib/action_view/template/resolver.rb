@@ -156,7 +156,9 @@ module ActionView
       Rails.logger.info([name, prefix, partial])
       cached(key, [name, prefix, partial], details, locals) do
         Rails.logger.info("find_all cached missed going to find using _find_all")
-        _find_all(name, prefix, partial, details, key, locals)
+        t = _find_all(name, prefix, partial, details, key, locals)
+        Rails.logger.info("AV: Resolver: got new val #{t.inspect}")
+        t
       end
     end
 
@@ -218,22 +220,22 @@ module ActionView
 
     private
       def _find_all(name, prefix, partial, details, key, locals)
-        Rails.logger.info("AV:: Resolver :: _find_all ")
+        Rails.logger.info("AV:: Path Resolver :: _find_all ")
         path = Path.build(name, prefix, partial)
         query(path, details, details[:formats], locals, cache: !!key)
       end
 
       def query(path, details, formats, locals, cache:)
-        Rails.logger.info("AV:: Resolver :: query ")
+        Rails.logger.info("AV:: Path Resolver :: query ")
         Rails.logger.info("#{path}, #{details}, #{formats}, #{locals}, #{cache}")
 
         template_paths = find_template_paths_from_details(path, details)
         template_paths = reject_files_external_to_app(template_paths)
 
-        template_paths.map do |template|
+        t = template_paths.map do |template|
           unbound_template =
             if cache
-              Rails.logger.info("using cache, #{template}, #{path.virtual}")
+              Rails.logger.info("AV:: Path Resolver:: using cache, #{template}, #{path.virtual}")
               @unbound_templates.compute_if_absent([template, path.virtual]) do
                 build_unbound_template(template, path.virtual)
               end
@@ -243,6 +245,9 @@ module ActionView
 
           unbound_template.bind_locals(locals)
         end
+
+        Rails.logger.info("AV:: query :: result #{t.inspect}")
+        Rails.logger.info("       "*300)
       end
 
       def source_for_template(template)
@@ -380,7 +385,7 @@ module ActionView
 
         Rails.logger.info("AV:: find_template_paths_from_details :: candidates #{candidates}")
 
-        candidates.uniq.reject do |filename|
+        result = candidates.uniq.reject do |filename|
           # This regex match does double duty of finding only files which match
           # details (instead of just matching the prefix) and also filtering for
           # case-insensitive file systems.
@@ -404,6 +409,9 @@ module ActionView
             end
           end
         end
+
+        Rails.logger.info("AV:: find_template_paths_from_details:: result #{result.inspect}")
+        result
       end
 
       def build_regex(path, details)
